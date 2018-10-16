@@ -182,6 +182,10 @@ Azure ポータルで、今回作成したリソースグループを開き、�
 - ソースコードの編集
 - 編集したソースコードを GUI で発行（デプロイ）
 
+ハンズオンはここまでとなります。次は、作成したリソースをクリーンアップします。
+
+### [前に戻る](./01-02_connect-to-channels.md) | [次へ進む](./01-01-04_cleanup.md)
+
 ---
 
 ## 参考ドキュメント
@@ -191,9 +195,3 @@ Azure ポータルで、今回作成したリソースグループを開き、�
 - [Understanding how bots work](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0&tabs=cs)
 - [Download and redeploy bot code](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-build-download-source-code?view=azure-bot-service-4.0)
 - [Set up continuous deployment](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-build-continuous-deployment?view=azure-bot-service-4.0)
-
----
-
-[Back](.md) | [Next](01-01-04_cleanup.md)
-
-> # todo link

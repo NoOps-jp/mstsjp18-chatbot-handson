@@ -127,14 +127,14 @@ Web App Bot を開きましょう。画面左側のメニューで「リソー�
 
 次は、チャンネル（今回は、Microsoft Teams と Slack）への接続を行います。
 
-### [READMEに戻る](../../../README.md) | [次へ進む](.md)
+### [README に戻る](../../../README.md) | [次へ進む](./01-02_connect-to-channels.md)
 
 > # todo link
 
 &nbsp;
 
 ---
-## 参考ドキュメント
+## 参考
 
 - [Azure Bot Service の概要](https://docs.microsoft.com/ja-jp/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
 

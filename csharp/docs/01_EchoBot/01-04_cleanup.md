@@ -10,6 +10,4 @@ Azure ポータルで、作成したリソースグループを開き、画面�
 
 次に進み、本ハンズオンのまとめをします。
 
----
-
-[Back](01-03_edit-program.md) | [Next](01-05_wrapup.md)
+### [戻る](./01-03_edit-program.md) | [次へ進む](./01-05_wrapup.md)

@@ -7,14 +7,6 @@
 
 > # TODO: add summary
 
-## 参考ドキュメント
-
-※ 2018 年 11 月現在だと、V4 の公式ドキュメントの一部は日本語翻訳対応が追い付いていないため、英語のドキュメントを見る必要があります。
-
-[Azure Bot Service Documentation](https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0)
 
 ---
-
-[Back](.md)
-
-> # todo link
+### [前に戻る](./01-04_cleanup.md) | [READMEに戻る](../../../README.md) 
