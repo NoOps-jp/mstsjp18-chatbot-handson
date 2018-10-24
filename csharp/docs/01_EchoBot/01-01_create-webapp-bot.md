@@ -1,17 +1,9 @@
 # 01-01. Bot Service (Web App Bot) の作成
 
-## ハンズオンの流れ
-
-以下の流れでハンズオンを進めます。
-
-- Azure ポータルから Bot Service(Web App Bot) を作成
-- Web チャットによる動作確認
-
-> # TODO: 全体の流れ追記！！！！！！！！！！
-
 ## Bot Service とは
 
-Azure Bot Service は、インテリジェントなボットの作成、テスト、配置、管理をすべて一元的に行うツールが備わっているサービスです。Skype, Microsoft Teams, Slack, Facebook Messenger などの Channel に容易に接続できる機能も備えています。  
+Azure Bot Service は、インテリジェントなボットの作成、テスト、配置、管理をすべて一元的に行うツールが備わっているサービスです。  
+Skype, Microsoft Teams, Slack, Facebook Messenger などの Channel に容易に接続できる機能も備えています。  
 Azure Bot Service のひとつ、**Web App Bot** は、Azure App Service の Web Apps 上にボットアプリケーションをホストするサービスです。
 
 Azure ポータルで、Bot Service (Web App Bot) を作成から始めましょう。
@@ -113,7 +105,7 @@ Web App Bot を開きましょう。画面左側のメニューで「リソー�
 「Web チャットでテスト」をクリックすると、Web チャットが表示されます。メッセージを入力してみましょう。エコーが返ってきます。  
 これは、このリソースを作った時に、エコーを表示するサンプルプログラムがデプロイされるためです。
 
-> **Memo**:「conversationUpdate event detected」というメッセージが表示されますが、これもサンプルプログラムに実装された正常な動作となります。
+> **Note**:「conversationUpdate event detected」というメッセージが表示されますが、これもサンプルプログラムに実装された正常な動作となります。
 
 ![cs01-01-10](../../images/cs01-01-10.png)
 
