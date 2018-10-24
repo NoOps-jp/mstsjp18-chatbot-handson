@@ -4,8 +4,16 @@
 
 - Azure ポータルから Bot Service(Web App Bot)の作成
 - Azure ポータルから Web チャットによる動作の確認
+- ソースコードの変更、ローカルデバッグ
+- Azure Bot Service へのデプロイ
+- チャンネルへの接続
+- リソースの一括削除方法
 
-> # TODO: add summary
+Azure 上への Bot Service の作成やチャンネルへの接続は、Azure ポータルの操作を中心に、容易に行えることが体感できましたでしょうか。
+
+ご興味が持てましたら、公式ドキュメントを参考に、よりチャットボットに取り組んで、開発をエンジョイしてみましょう。
+
+### Happy Coding !
 
 ---
-[前に戻る](./01-04_cleanup.md) | [READMEに戻る](../../../README.md) 
+[前に戻る](./01-04_cleanup.md) | [READMEに戻る](../../../README.md)
