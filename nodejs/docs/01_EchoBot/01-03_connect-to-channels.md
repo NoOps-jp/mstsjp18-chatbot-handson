@@ -19,30 +19,36 @@ Azure ポータルを開き、今回作成した Bot Service のリソースを�
 
 > 開き方が不明の場合: 今回作成したリソースグループを開き、種類が「Web アプリ ボット」のリソースをクリックして開きます。
 
-![cs01-03-7](../../images/cs01-03-7.png)
+![nodejs01-03-1](../../images/nodejs01-03-1.png)
 
 &nbsp;
 
 「チャンネル」をクリックし、「チャンネルに接続」で、Teams のアイコンをクリックします。
 
-![cs01-03-20](../../images/cs01-03-20.png)
+![nodejs01-03-2](../../images/nodejs01-03-2.png)
 
 &nbsp;
 
-「完了」ボタンをクリックします。
+「保存」ボタンをクリックします。
 
 > **Note**: 認証を使った機能の実装も可能ですが、今回は利用しません。
 
-![cs01-03-21](../../images/cs01-03-21.png)
+![nodejs01-03-3](../../images/nodejs01-03-3.png)
+
+&nbsp;
+
+「サービス条件」の確認が表示される場合は、確認の上、同意にチェックを付け、「Agree」ボタンをクリックしてください。
+
+![nodejs01-03-4](../../images/nodejs01-03-4.png)
 
 &nbsp;
 
 ### ID の取得
 
 「Microsoft App ID」を取得します。これは、Teams から Bot Service に接続する際に必要となります。  
-Bot Service のリソースの「設定」をクリックすると、「Microsoft App ID」の値が表示されます。後程利用しますので、コピーしておきましょう。
+Bot Service のリソースの「設定」をクリックすると、「Microsoft App ID」の値が表示されます。後程利用しますので、コピーしておきましょう。（フィールドをダブルクリックすると選択できます。）
 
-![cs01-03-22](../../images/cs01-03-22.png)
+![nodejs01-03-5](../../images/nodejs01-03-5.png)
 
 &nbsp;
 
@@ -51,19 +57,19 @@ Bot Service のリソースの「設定」をクリックすると、「Microsof
 Microsoft Teams を開きましょう。  
 Teams のメニュー「チャット」を右クリック > 「新しいチャット」をクリックします。
 
-![cs01-03-23](../../images/cs01-03-23.png)
+![nodejs01-03-6](../../images/nodejs01-03-6.png)
 
 &nbsp;
 
 メンバーの入力欄に、先ほど Azure ポータルで取得した「Microsoft App ID」の値を入力しましょう。ボットの表示名が表示されます。
 
-![cs01-03-24](../../images/cs01-03-24.png)
+![nodejs01-03-7](../../images/nodejs01-03-7.png)
 
 &nbsp;
 
 会話をしてみましょう。今回作成したエコーボットの返答が来ることが確認できます。
 
-![cs01-03-25](../../images/cs01-03-25.png)
+![nodejs01-03-8](../../images/nodejs01-03-8.png)
 
 &nbsp;
 
@@ -80,7 +86,7 @@ Slack にログインした状態で、以下 URL にアクセスします。`Cr
 
 `https://api.slack.com/apps`
 
-![cs01-03-1](../../images/cs01-03-1.png)
+![cs01-03-1](../../../csharp/images/cs01-03-1.png)
 
 &nbsp;
 
@@ -89,7 +95,7 @@ Bot User の登録画面で、「App Name」と「Developement Slack Workspace�
 
 「Create App」ボタンをクリックします。
 
-![cs01-03-2](../../images/cs01-03-2.png)
+![cs01-03-2](../../../csharp/images/cs01-03-2.png)
 
 &nbsp;
 
@@ -97,7 +103,7 @@ Bot User の登録画面で、「App Name」と「Developement Slack Workspace�
 
 画面左部メニューの「OAuth & Permissions」をクリック > 「Add New Redirect URL」をクリックします。
 
-![cs01-03-3](../../images/cs01-03-3.png)
+![cs01-03-3](../../../csharp/images/cs01-03-3.png)
 
 &nbsp;
 
@@ -107,7 +113,7 @@ URL の入力欄が表示されますので、以下の値を入力します。
 
 「Add」ボタンをクリックし、そのあと「Save URLs」ボタンをクリックします。
 
-![cs01-03-4](../../images/cs01-03-4.png)
+![cs01-03-4](../../../csharp/images/cs01-03-4.png)
 
 &nbsp;
 
@@ -115,7 +121,7 @@ URL の入力欄が表示されますので、以下の値を入力します。
 
 画面左部メニューの「Bot Users」をクリックし、「Add a Bot User」をクリックします。
 
-![cs01-03-5](../../images/cs01-03-5.png)
+![cs01-03-5](../../../csharp/images/cs01-03-5.png)
 
 &nbsp;
 
@@ -124,7 +130,7 @@ URL の入力欄が表示されますので、以下の値を入力します。
 
 「Add Bot User」をクリックします。
 
-![cs01-03-6](../../images/cs01-03-6.png)
+![cs01-03-6](../../../csharp/images/cs01-03-6.png)
 
 &nbsp;
 
@@ -133,7 +139,7 @@ URL の入力欄が表示されますので、以下の値を入力します。
 Azure のポータルで情報の取得が必要です。  
 Slack の画面は開いたまま、別のブラウザーウインドウで Azure ポータルを開き、作成したリソースグループから種類が「Web アプリ ボット」のリソースを開きます。
 
-![cs01-03-7](../../images/cs01-03-7.png)
+![nodejs01-03-1](../../images/nodejs01-03-1.png)
 
 &nbsp;
 
@@ -141,7 +147,7 @@ Slack の画面は開いたまま、別のブラウザーウインドウで Azur
 
 また、Azure ポータル画面は開いたままにしましょう。後ほど戻ってきます。
 
-![cs01-03-8](../../images/cs01-03-8.png)
+![nodejs01-03-9](../../images/nodejs01-03-9.png)
 
 &nbsp;
 
@@ -156,7 +162,7 @@ Slack の画面に戻り設定を続けます。
 | Request URL             | 「`{YourBotHandle}`」には、先ほど取得した「ボット ハンドル」の値を入力します。 | `https://slack.botframework.com/api/Events/{YourBotHandle}`                                                                            |
 | Subscribe to Bot Events | 「Add Bot User Event」ボタンをクリックし、6 つのイべントを追加します。         | `member_joined_channel` <br> `member_left_channel` <br> `message.channels` <br> `message.groups` <br> `message.im` <br> `message.mpim` |
 
-![cs01-03-9](../../images/cs01-03-9.png)
+![nodejs01-03-10](../../images/nodejs01-03-10.png)
 
 &nbsp;
 
@@ -167,7 +173,7 @@ Slack の資格情報を取得します。
 画面左部メニューの「Event Subscriptions」をクリックすると、「App Credentials」から下へスクロールすると各種値が記載されています。  
 この画面を開いたままで、Azure ポータルに戻ります。
 
-![cs01-03-10](../../images/cs01-03-10.png)
+![cs01-03-10](../../../csharp/images/cs01-03-10.png)
 
 &nbsp;
 
@@ -176,7 +182,7 @@ Slack の資格情報を取得します。
 先ほど開いたままの Azure ポータル に戻りましょう。Bot Service(Web App Bot) のリソースで「チャンネル」をクリックします。  
 「チャンネルに接続」画面の「その他のチャンネル」で、Slack の表示がありますのでクリックしましょう。
 
-![cs01-03-11](../../images/cs01-03-11.png)
+![nodejs01-03-11](../../images/nodejs01-03-11.png)
 
 &nbsp;
 
@@ -188,16 +194,18 @@ Slack の資格情報を取得します。
 | クライアントシークレット | Client Secret        |
 | 確認トークン             | Verification Token   |
 
+![nodejs01-03-12](../../images/nodejs01-03-12.png)
+
 「保存」ボタンをクリックすると、以下の画面が表示されます。問題ないことを確認し「Authorize」ボタンをクリックします。
 
-![cs01-03-12](../../images/cs01-03-12.png)
+![cs01-03-12](../../../csharp/images/cs01-03-12.png)
 
 &nbsp;
 
 正常に完了すると、Slack の App に先ほど作成したアプリが登録されたことが確認できます。  
 Slack を開いてみましょう。登録したアプリを選択してメッセージを入力すると、Bot Service のチャットボットから応答が来ることが確認できます。
 
-![cs01-03-13](../../images/cs01-03-13.png)
+![cs01-03-13](../../../csharp/images/cs01-03-13.png)
 
 &nbsp;
 
