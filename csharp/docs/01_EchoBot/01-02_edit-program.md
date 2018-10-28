@@ -23,6 +23,10 @@ Azure ポータルで、今回作成したリソースグループを開き、�
 
 Zip ファイルを解凍すると、中にソリューションファイル（拡張子が `.sln` のファイル）があります。ダブルクリックすると、Visual Studio でプロジェクトが表示されます。
 
+Visual Studio は、ソリューションファイルがダウンロードしたものであると判断すると、安全性の確認をもとめてくる場合があります。もし下記のような警告が表示される場合は、確認の上、「OK」をクリックして進めてください。
+
+![cs01-02-22](../../images/cs01-02-22.png)
+
 ソリューションエクスプローラーで「EchoWithCounterBot.cs」をダブルクリックして開きましょう。  
 ここで詳細の説明はしませんが、ユーザーがチャットボットにアクセスすると、`EchoWithCounterBot` クラスの `OnTurnAsync` が実行されます。
 
@@ -32,7 +36,7 @@ Zip ファイルを解凍すると、中にソリューションファイル（�
 
 ここでは、「**ヘルプ**」と入力すると、「**私は、エコーを返すチャットボットです。何か入力してください。**」と返すようにします。
 
-実装は以下コードにあるように、`if (turnContext.Activity.Type == ActivityTypes.Message)` if ステートメント内を変更します。
+実装は以下コードにあるように、 `OnTurnAsync` の `if (turnContext.Activity.Type == ActivityTypes.Message)` if ステートメント内を変更します。
 この中にあった既存のコードは、新たに追加した `if (message == "ヘルプ"){...} else {...}` の `else` の ステートメントブロックに移動します。
 
 次に、`if (message == "ヘルプ")` の前の行で、ユーザーが入力したメッセージを取得しています。
@@ -47,13 +51,16 @@ Zip ファイルを解凍すると、中にソリューションファイル（�
             // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
             if (turnContext.Activity.Type == ActivityTypes.Message)
             {
+                // ★: ここから ----
                 var receivedMessage = turnContext.Activity.Text;
 
+                // ★: 「ヘルプ」と入力された場合の条件を追加する
                 if (receivedMessage == "ヘルプ")
                 {
                     var helpMessage = "私は、エコーを返すチャットボットです。何か入力してください。";
                     await turnContext.SendActivityAsync(helpMessage);
                 }
+                // ★: その他の条件の場合、元の処理を実行する
                 else
                 {
                     // Get the conversation state from the turn context.
@@ -72,6 +79,7 @@ Zip ファイルを解凍すると、中にソリューションファイル（�
                     var responseMessage = $"Turn {state.TurnCount}: You sent '{turnContext.Activity.Text}'\n";
                     await turnContext.SendActivityAsync(responseMessage);
                 }
+                // ★: ここまで ----
             }
             else
             {
@@ -79,6 +87,10 @@ Zip ファイルを解凍すると、中にソリューションファイル（�
             }
         }
 ```
+
+※ 保存するときに、2バイト文字列を含む更新を行ったので、下記の警告が表示される場合があります。「Yes」ボタンをクリックし進めてください。
+
+![cs01-02-23](../../images/cs01-02-23.png)
 
 ## ローカルでデバッグ
 
@@ -140,11 +152,23 @@ try
 }
 ```
 
-`F5` キーを押してデバッグ実行を開始し、エラーなく実行できることを確認しましょう。
+&nbsp;
+
+### ブレークポイントの確認
+
+なお、 `Startup.cs` には、２つのブレークポイントが設定されているので、必要がない場合は外しましょう。
+
+![cs01-02-24](../../images/cs01-02-24.png)
 
 &nbsp;
 
-#### エミュレーターの起動
+### デバッグ実行
+
+それでは、`F5` キーを押してデバッグ実行を開始し、エラーなく実行できることを確認しましょう。
+
+&nbsp;
+
+### エミュレーターの起動
 
 Windows のメニューで「bot」と入力し、Bot Framework Emulator を起動します。
 
@@ -164,9 +188,21 @@ Windows のメニューで「bot」と入力し、Bot Framework Emulator を起�
 
 &nbsp;
 
+下記のように _Bot file secret_ を求められた場合は、先ほど取得した `botFileSecret` のシークレットキーの値を入力し、「Submit」ボタンをクリックして進んでください。
+
+![cs01-02-25](../../images/cs01-02-25.png)
+
+&nbsp;
+
 「ヘルプ」と入力し、実装した動作になることを確認してみましょう。
 
 ![cs01-02-7](../../images/cs01-02-7.png)
+
+&nbsp;
+
+### デバッグ実行の停止
+
+確認が済んだら、 Visual Studio で `Shift + F5` を入力し、デバッグ実行を停止します。
 
 &nbsp;
 
@@ -178,9 +214,9 @@ Windows のメニューで「bot」と入力し、Bot Framework Emulator を起�
 
 Web Apps（App Service）に対して発行を行う前に、Web Apps のリソースから発行プロファイルを取得し、パスワードを取得をします。
 
-Azure のポータルを開きましょう。今回作成した Bot Service のリソースを開きます。
+Azure のポータルを開きましょう。今回作成した App Service のリソースを開きます。
 
-> 開き方が不明の場合: 今回作成したリソースグループを開き、種類が「Web アプリ ボット」のリソースをクリックして開きます。
+> 開き方が不明の場合: 今回作成したリソースグループを開き、種類が「App Service」のリソースをクリックして開きます。
 
 ![cs01-02-11](../../images/cs01-02-11.png)
 
@@ -250,7 +286,7 @@ Azure ポータルで、Bot Service のリソースを開きましょう。
 
 &nbsp;
 
-「Web チャットでテスト」を開きます。文字を入力してウェルカムメッセージが表示されれば、正常に更新ができました。
+「Web チャットでテスト」を開きます。「ヘルプ」と入力して実装した内容が返されれば、正常に更新ができました。
 
 ![cs01-02-21](../../images/cs01-02-21.png)
 
