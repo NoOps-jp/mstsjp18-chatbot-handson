@@ -11,7 +11,7 @@ Bot Service の強力な機能のひとつとして、容易に様々なチャ�
 
 利用可能な Microsoft Teams のアカウントをお持ちの場合は、ご自身のをご利用ください。
 
-また、ハンズオン用に用意してあるアカウントがあります。ご利用の場合、スタッフにご確認ください。
+また、ハンズオン用に用意してあるアカウントがあります。ご利用の場合は、ハンズオン用PCにプリインストールされている Microsoft Teams をご利用ください。
 
 ### Teams チャンネルの有効化
 
@@ -158,7 +158,7 @@ Slack の画面に戻り設定を続けます。
 
 | 項目                    | 説明                                                                           | 入力値                                                                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| nable Events            | On にします。                                                                  | `On`                                                                                                                                   |
+| Enable Events            | On にします。                                                                  | `On`                                                                                                                                   |
 | Request URL             | 「`{YourBotHandle}`」には、先ほど取得した「ボット ハンドル」の値を入力します。 | `https://slack.botframework.com/api/Events/{YourBotHandle}`                                                                            |
 | Subscribe to Bot Events | 「Add Bot User Event」ボタンをクリックし、6 つのイべントを追加します。         | `member_joined_channel` <br> `member_left_channel` <br> `message.channels` <br> `message.groups` <br> `message.im` <br> `message.mpim` |
 
