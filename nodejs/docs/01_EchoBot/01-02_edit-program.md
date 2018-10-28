@@ -2,29 +2,183 @@
 
 Azure 上にデプロイされた Bot Service (Web App Bot) のソースコードをダウンロードし、更新して再度デプロイしてみましょう。
 
+Node.js (javascript) 版では、Windows/MacOS/Linux のクロスプラットフォームで動作する Azure CLI と Visual Studio Code を利用します。参考情報については章末をご覧ください。
+
+## Azure CLI の準備
+
+Windows のスタートメニューの検索欄で、「powershell」と入力し、 Windows PowerShell を開きます。
+
+![nodejs01-02-1](../../images/nodejs01-02-1.png)
+
+&nbsp;
+
+下記のコマンドを実行し、ログイン済みか確認します。
+
+```powershell
+# ログイン中のアカウント（サブスクリプションを含む）を表示する
+az account show
+```
+
+下記のようにJSON形式でサブスクリプション情報が表示されれば、ログイン済みですので、次の項へお進みください。
+```json
+{
+  "cloudName": "AzureCloud",
+  "id": "<subscription id>",
+  "isDefault": false,
+  "name": "<subscription name>",
+  "state": "Enabled",
+  "tenantId": "<tenant id>",
+  "user": {
+    "name": "<user name>",
+    "type": "user"
+  }
+}
+```
+
+&nbsp;
+
+もし、 `Please run 'az login' to setup account.` という文言が表示される場合は、ログインが必要なので、下記コマンドを実行します。すると、ブラウザが開きログインを促されるので、画面に従いログインします。
+
+```powershell
+# Azure にログインする
+az login
+```
+
+下記の表示のあと、しばらく待つとサブスクリプション情報が表示され、ログインが完了します。
+
+![nodejs01-02-1](../../images/nodejs01-02-2.png)
+
+&nbsp;
+
+ここでサブスクリプションが複数表示される場合は、利用するサブスクリプションを指定してください。
+
+```powershell
+# 利用可能なサブスクリプションの一覧を表示する
+az account list
+
+[
+  {
+    "cloudName": "AzureCloud",
+    "id": "<subscription id>",
+    "isDefault": false,
+    "name": "<subscription name>",
+    "state": "Enabled",
+    "tenantId": "<tenant id>",
+    "user": {
+      "name": "<user name>",
+      "type": "user"
+    }
+  },
+  {
+    "cloudName": "AzureCloud",
+    "id": "<subscription id>",
+    "isDefault": false,
+    "name": "<subscription name>",
+    "state": "Enabled",
+    "tenantId": "<tenant id>",
+    "user": {
+      "name": "<user name>",
+      "type": "user"
+    }
+  }
+]
+
+# 利用するサブスクリプションの subscription id をコピーし、下記コマンドで指定する
+az account set -s <subscription id>
+
+# 指定したサブスクリプションが指定されたかどうか、確認する
+az account show
+```
+
+&nbsp;
+
+## リソースグループ名と Bot Service 名を確認
+
+まず、対象のリソースグループ名と Bot Service 名前を確認しましょう。
+
+下記コマンドを実行し、リソースグループ名を確認し、変数に設定します。 `az`コマンドは、 `--output table` というオプションを利用すると、テーブル形式で表示できます。
+
+```powershell
+# リソースグループ一覧を表示する
+az group list --output table
+
+Name                        Location    Status
+--------------------------  ----------  ---------
+ts2018-echo-bot-nodejs      japaneast   Succeeded
+
+# リソースグループ名を変数に設定する
+Set-Variable -Name RESOURCE_GROUP -Value ts2018-echo-bot-nodejs
+
+# 正しく変数に設定されたか確認する（指定したリソースグループ名が表示されればOKです。）
+$RESOURCE_GROUP
+```
+
+&nbsp;
+
+次に、下記コマンドを実行し、Bot Service の名前を確認し、変数に設定します。 Bot Service は、 _Type_ が `Microsoft.BotService/botServices` となっているリソースです。
+
+```powershell
+# リソースグループ内のリソース一覧を表示する
+az resource list -g $RESOURCE_GROUP --output table
+
+Name                          ResourceGroup           Location    Type                               Status
+----------------------------  ----------------------  ----------  ---------------------------------  --------
+ts2018-echo-bot-nodejs        ts2018-echo-bot-nodejs  global      Microsoft.BotService/botServices
+ts2018-echo-bot-nodejsdp6vul  ts2018-echo-bot-nodejs  eastus      microsoft.insights/components
+ts2018echobotnodejs84d3       ts2018-echo-bot-nodejs  japaneast   Microsoft.Storage/storageAccounts
+ts2018-echo-bot-nodejs        ts2018-echo-bot-nodejs  japaneast   Microsoft.Web/serverFarms
+ts2018-echo-bot-nodejs        ts2018-echo-bot-nodejs  japaneast   Microsoft.Web/sites
+
+# Bot Service 名を変数に設定する
+Set-Variable -Name BOTSERVICE_NAME -Value ts2018-echo-bot-nodejs
+
+# 正しく変数に設定されたか確認する（指定した Bot Service 名が表示されればOKです。）
+$BOTSERVICE_NAME
+```
+
+&nbsp;
+
 ## ソースコードのダウンロード
 
-Azure ポータルで、今回作成したリソースグループを開き、種類が「Web アプリ ボット」のリソースをクリックし、Web App Bot を開きます。
-
-![cs01-02-1](../../images/cs01-02-1.png)
+それでは、ソースコードをダウンロードしましょう。
 
 &nbsp;
 
-「ビルド」をクリック > 「zip ファイルをダウンロード」をクリックします。  
-ソース Zip ファイルの作成中と表示され、準備が終わる（1 分程度かかります）と「zip ファイルをダウンロード」ボタンが表示されます。クリックしてダウンロードしましょう。
+まず、2018年11月時点、Azure CLI のバージョンが `2.0.49` までの場合は、 `botservice` の拡張機能を追加する必要があります。下記のコマンドを実行してください。
 
-![cs01-02-2](../../images/cs01-02-2.png)
+なお、 `The extension botservice already exists.` と表示される場合はすでに追加済みのため、次に進んで問題ありません。
+
+```powershell
+# botserviceの拡張機能を追加する
+az extension add --name botservice
+```
 
 &nbsp;
 
-ダウンロードされた Zip ファイルを解凍しましょう。
+任意のディレクトリを作成し、その中に Bot Service のソースコード一式をダウンロードします。
+
+```powershell
+# 任意のディレクトリを作成し、そのディレクトリに移動する
+mkdir handson-source
+cd handson-source
+
+# Bot Service からソースコード一式をダウンロードし、そのディレクトリに移動する
+az bot download --resource-group $RESOURCE_GROUP --name $BOTSERVICE_NAME
+cd $BOTSERVICE_NAME
+```
+
+&nbsp;
 
 ## ソースコードの編集
 
-Zip ファイルを解凍すると、中にソリューションファイル（拡張子が `.sln` のファイル）があります。ダブルクリックすると、Visual Studio でプロジェクトが表示されます。
+ソースコード一式のディレクトリを Visual Studio Code で開きます。
 
-ソリューションエクスプローラーで「EchoWithCounterBot.cs」をダブルクリックして開きましょう。  
-ここで詳細の説明はしませんが、ユーザーがチャットボットにアクセスすると、`EchoWithCounterBot` クラスの `OnTurnAsync` が実行されます。
+```bash
+# カレントディレクトリを、 Visual Studio Code で開く
+code .
+```
+
+&nbsp;
 
 ### 簡単な分岐の実装
 
@@ -32,227 +186,180 @@ Zip ファイルを解凍すると、中にソリューションファイル（�
 
 ここでは、「**ヘルプ**」と入力すると、「**私は、エコーを返すチャットボットです。何か入力してください。**」と返すようにします。
 
-実装は以下コードにあるように、`if (turnContext.Activity.Type == ActivityTypes.Message)` if ステートメント内を変更します。
-この中にあった既存のコードは、新たに追加した `if (message == "ヘルプ"){...} else {...}` の `else` の ステートメントブロックに移動します。
+&nbsp;
 
-次に、`if (message == "ヘルプ")` の前の行で、ユーザーが入力したメッセージを取得しています。
+ソースコード一式のディレクトリを開いた Visual Studio Code
+ で、 _bot.js_ を開きます。このファイルには `EchoBot` クラスが記述されており、 28行目付近の `onTurn()` でユーザーからの入力に対する処理を記述しています。この部分を変更しましょう。
 
-最後に、`if (message == "ヘルプ")` の中に新規コードを追加しています。
+下記の変更前後のサンプルを参考に、「 `★: ここから ----`」から「`★: ここまで ----`」までを書き換えてください。
 
-```cs
-        public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            // Handle Message activity type, which is the main activity type for shown within a conversational interface
-            // Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
-            // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
-            if (turnContext.Activity.Type == ActivityTypes.Message)
-            {
-                var receivedMessage = turnContext.Activity.Text;
+#### _bot.js_ (変更前)
+```js
+    async onTurn(turnContext) {
 
-                if (receivedMessage == "ヘルプ")
-                {
-                    var helpMessage = "私は、エコーを返すチャットボットです。何か入力してください。";
-                    await turnContext.SendActivityAsync(helpMessage);
-                }
-                else
-                {
-                    // Get the conversation state from the turn context.
-                    var state = await _accessors.CounterState.GetAsync(turnContext, () => new CounterState());
+        // ...省略...
 
-                    // Bump the turn count for this conversation.
-                    state.TurnCount++;
-
-                    // Set the property using the accessor.
-                    await _accessors.CounterState.SetAsync(turnContext, state);
-
-                    // Save the new turn count into the conversation state.
-                    await _accessors.ConversationState.SaveChangesAsync(turnContext);
-
-                    // Echo back to the user whatever they typed.
-                    var responseMessage = $"Turn {state.TurnCount}: You sent '{turnContext.Activity.Text}'\n";
-                    await turnContext.SendActivityAsync(responseMessage);
-                }
-            }
-            else
-            {
-                await turnContext.SendActivityAsync($"{turnContext.Activity.Type} event detected");
-            }
+        if (turnContext.activity.type === ActivityTypes.Message) {
+            // read from state.
+            let count = await this.countProperty.get(turnContext);
+            count = count === undefined ? 1 : ++count;
+            await turnContext.sendActivity(`${ count }: You said "${ turnContext.activity.text }"`);
+            // increment and set turn counter.
+            await this.countProperty.set(turnContext, count);
+        } else { 
+            // Generic handler for all other activity types.
+            await turnContext.sendActivity(`[${ turnContext.activity.type } event detected]`);
         }
+        // Save state changes
+        await this.conversationState.saveChanges(turnContext);
+    }
 ```
+
+#### _bot.js_ (変更後)
+```js
+    async onTurn(turnContext) {
+
+        // ...省略...
+
+        if (turnContext.activity.type === ActivityTypes.Message) {
+            // ★: ここから ----
+            // ★: 「ヘルプ」と入力された場合の条件を追加する
+            if (turnContext.activity.text == "ヘルプ")
+            {
+                // ★: ヘルプ用のテキストを送信する
+                const helpMessage = "私は、エコーを返すチャットボットです。何か入力してください。";
+                await turnContext.sendActivity(helpMessage);
+            }
+            // ★: その他の条件の場合、元の処理を実行する
+            else {
+                // read from state.
+                let count = await this.countProperty.get(turnContext);
+                count = count === undefined ? 1 : ++count;
+                await turnContext.sendActivity(`${ count }: You said "${ turnContext.activity.text }"`);
+                // increment and set turn counter.
+                await this.countProperty.set(turnContext, count);
+            }
+            // ★: ここまで ----
+        } else {
+            // Generic handler for all other activity types.
+            await turnContext.sendActivity(`[${ turnContext.activity.type } event detected]`);
+        }
+        // Save state changes
+        await this.conversationState.saveChanges(turnContext);
+    }
+```
+
+&nbsp;
 
 ## ローカルでデバッグ
 
 本ハンズオンでは、PC に、ローカルでデバッグ実行してテストできるよう、チャットボットのクライアントアプリ（ユーザーがことばを入力する UI のアプリ)として、Bot Framework Emulator がインストール済みになっています。
 ソースコードをデバッグし、Bot Framework Emulator から起動して動作確認してみましょう。
 
-### 準備
-
-Azure Bot Service からダウンロードしたソースコードをデバッグするには、2 つの作業が必要になります。
-
-- Azure ポータルから暗号キーの取得し、ソースコードにセットする
-- `.bot` ファイルのファイル名を確認し、設定する
-
 &nbsp;
 
-#### Azure ポータルからシークレットキーの取得し、ソースコードにセット
+### チャットボットの実行
 
-ソリューションエクスプローラー内にある `.bot` は暗号化されているためシークレットキーが必要になります。Azure ポータルの、Bot Service のアプリケーション設定に登録されています。
+まず、下記コマンドを実行し、チャットボットを実行します。
 
-Azure ポータルで、Web App Bot のリソースを開きましょう。
+```powershell
+# パッケージをインストールする（※下記参照）
+npm install
 
-> 開き方が不明の場合: 今回作成したリソースグループを開き、種類が「Web アプリ ボット」のリソースをクリックして開きます。
-
-「アプリケーション設定」をクリックします。表示された画面を下へスクロールし、「アプリケーション設定」の中から botFileSecret の値を取得しましょう。
-
-![cs01-02-3](../../images/cs01-02-3.png)
-
-&nbsp;
-
-Visual Studio に戻り、`Startup.cs` を開きます。  
-`ConfigureServices` メソッドで、
-
-```cs
-var secretKey = Configuration.GetSection("botFileSecret")?.Value;
+# 実行する
+npm start
 ```
 
-と書かれた部分を、以下のように変更します。
-
-```cs
-var secretKey = Configuration.GetSection("botFileSecret")?.Value ?? "{先ほど取得したシークレットキー}";
-```
-
-> 注意: 今回は簡易に実装するためシークレットキーを直接記載していますが、一般的には、セキュアな方法で実装します。
+※ パッケージインストールで、 `node-gyp` のリビルドでエラーが表示される場合がありますが、本ハンズオンには影響しませんので無視してお進みください。
 
 &nbsp;
 
-#### `.bot` ファイルの設定
-
-引き続き `Startup.cs` の `ConfigureServices` メソッドを見ていきます。
-
-70 行目あたりのコードで、.bot のファイル名を指定しています。  
-このファイル名をソリューションエクスプローラーでファイル名を確認し、実際に存在するファイル名に変更します。
-
-```cs
-try
-{
-    // ソリューションエクスプローラーで、「ts2018-bot2.bot」がある場合は、以下のように変更します。
-    botConfig = BotConfiguration.Load(botFilePath ?? @".\ts2018-bot2.bot", secretKey);
-}
-```
-
-`F5` キーを押してデバッグ実行を開始し、エラーなく実行できることを確認しましょう。
-
-&nbsp;
-
-#### エミュレーターの起動
+### エミュレーターの起動
 
 Windows のメニューで「bot」と入力し、Bot Framework Emulator を起動します。
 
-![cs01-02-4](../../images/cs01-02-4.png)
+![cs01-02-4](../../../csharp/images/cs01-02-4.png)
 
 &nbsp;
 
 「Open Bot」をクリックし、`.bot` ファイルを選択しましょう。
 
-![cs01-02-5](../../images/cs01-02-5.png)
+![cs01-02-5](../../../csharp/images/cs01-02-5.png)
 
 &nbsp;
 
 `.bot` ファイルの場所が不明の場合は、Visual Studio でプロジェクト名を右クリックし、「エクスプローラーでフォルダーを開く」をクリックして確認することができます。
 
-![cs01-02-6](../../images/cs01-02-6.png)
+![cs01-02-6](../../../csharp/images/cs01-02-6.png)
 
 &nbsp;
 
-「ヘルプ」と入力し、実装した動作になることを確認してみましょう。
+下記のように _Bot file secret_ を求められた場合は、ソースコード一式の _.env_ の _botFileSecret_ の値を入力し、「Submit」ボタンをクリックして進んでください。
 
-![cs01-02-7](../../images/cs01-02-7.png)
+![nodejs01-02-4](../../images/nodejs01-02-4.png)
 
-&nbsp;
-
-## 発行（デプロイ）
-
-今回のようにダウンロードしたプログラムには、既に Azure への発行情報が組み込まれていますが、発行をするためのパスワードだけは、確認して入力する必要があります。
-
-### 発行プロファイルの取得
-
-Web Apps（App Service）に対して発行を行う前に、Web Apps のリソースから発行プロファイルを取得し、パスワードを取得をします。
-
-Azure のポータルを開きましょう。今回作成した Bot Service のリソースを開きます。
-
-> 開き方が不明の場合: 今回作成したリソースグループを開き、種類が「Web アプリ ボット」のリソースをクリックして開きます。
-
-![cs01-02-11](../../images/cs01-02-11.png)
+#### _.env_
+```json
+botFileSecret=<bot file secret>
+botFilePath=ts2018-echo-bot-nodejs.bot
+NODE_ENV=development
+```
 
 &nbsp;
 
-メニューの「概要」 > 「発行プロファイルの取得」をクリックすると、発行プロファイルがダウンロードされます。
+### 動作確認
 
-![cs01-02-12](../../images/cs01-02-12.png)
+チャットウィンドウが開かれたら、「ヘルプ」と入力し、実装した動作になることを確認してみましょう。
 
-&nbsp;
-
-発行プロファイルは、XML ファイルになっています。テキストエディター（メモ帳や VS Code）で開きましょう。  
-改行がないため見難いですが、「publishProfile profileName="ts2018-echo-bot - Web Deploy"」の中の「userPWD」の値がパスワードになります。
-この後の手順で利用します。
-
-![cs01-02-13](../../images/cs01-02-13.png)
+![nodejs01-02-7](../../images/nodejs01-02-7.png)
 
 &nbsp;
 
-### 発行（デプロイ）の実施
+### チャットボットの終了
+
+確認が完了したら、チャットボットを終了しておきましょう。
+
+```powershell
+
+# Ctrl + c を入力する
+
+# 下記の確認が表示されるので、「Y」を入力してチャットボットを終了する
+Terminate batch job (Y/N)? Y
+```
+
+&nbsp;
+
+### デプロイの実施
 
 更新したプログラムを Azure 上にデプロイしてみましょう。
 
-ここでは、Visual Studio の GUI から発行を行います。  
-今回は説明しませんが、Azure CLI を使った発行や、継続的なデプロイの設定も可能です。
-
-先ほどまで作業していた Visual Studio に戻り、ソリューションエクスプローラーでプロジェクト名を右クリック > 「発行」をクリックします。
-
-![cs01-02-14](../../images/cs01-02-14.png)
+ここでは、 Azure CLI を利用してデプロイを行います。これ以外にも、継続的なデプロイの設定なども可能です。
 
 &nbsp;
 
-発行の画面が表示されます。「構成」をクリックします。
+下記コマンドを実行し、
 
-![cs01-02-15](../../images/cs01-02-15.png)
-
-&nbsp;
-
-発行のダイアログが表示されます。パスワードに先ほど取得したパスワードを入力しましょう。  
-「接続の検証」ボタンをクリックすると、接続テストを行ってパスワードが正しいか確認できます。  
-正常に検証ができたら、「保存」ボタンをクリックしましょう。
-
-![cs01-02-16](../../images/cs01-02-16.png)
-
-&nbsp;
-
-発行の画面に戻ったら、「発行」ボタンをクリックし、発行を行います。
-
-![cs01-02-17](../../images/cs01-02-17.png)
-
-&nbsp;
-
-出力ウインドウで、発行の進捗が確認できます。以下のように表示されたら完了です。
-
-![cs01-02-18](../../images/cs01-02-18.png)
+```powershell
+# カレントディレクトリのコードを Bot Service にデプロイする
+az bot publish --resource-group $RESOURCE_GROUP --name $BOTSERVICE_NAME
+```
 
 &nbsp;
 
 ## WebChat で動作確認
 
-Web Chat の機能で、更新したプログラムが正しく動作するか確認しましょう。  
+Web Chat の機能で、更新したプログラムが正しく動作するか確認しましょう。
 Azure ポータルで、Bot Service のリソースを開きましょう。
 
 > 開き方が不明の場合: 今回作成したリソースグループを開き、種類が「Web アプリ ボット」のリソースをクリックして開きます。
 
-![cs01-02-20](../../images/cs01-02-20.png)
+![nodejs01-02-20](../../images/nodejs01-02-20.png)
 
 &nbsp;
 
-「Web チャットでテスト」を開きます。文字を入力してウェルカムメッセージが表示されれば、正常に更新ができました。
+「Web チャットでテスト」を開きます。「ヘルプ」と入力すると、実装した内容が返されることを確認できます。
 
-![cs01-02-21](../../images/cs01-02-21.png)
+![nodejs01-02-21](../../images/nodejs01-02-21.png)
 
 &nbsp;
 
@@ -262,7 +369,7 @@ Azure ポータルで、Bot Service のリソースを開きましょう。
 
 - Azure 上にデプロイされたソースコードのダウンロード
 - ソースコードの編集
-- 編集したソースコードを GUI で発行（デプロイ）
+- 編集したソースコードをデプロイ
 
 次は、Slack や Microsoft Teams といったチャンネルに接続してみます。
 
@@ -274,8 +381,20 @@ Azure ポータルで、Bot Service のリソースを開きましょう。
 
 ### 参考ドキュメント
 
+#### Bot Framework
 ※ 2018 年 11 月現在だと、V4 の公式ドキュメントの一部は日本語翻訳対応が追い付いていないため、英語のドキュメントを見る必要があります。
 
-- [Understanding how bots work](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0&tabs=cs)
-- [Download and redeploy bot code](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-build-download-source-code?view=azure-bot-service-4.0)
+- [Understanding how bots work](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0)
+- [botbuilder-tools/AzureCli at master · Microsoft/botbuilder-tools](https://github.com/Microsoft/botbuilder-tools/tree/master/AzureCli)
+- [Download and redeploy bot source code - Bot Service | Microsoft Docs](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-build-download-source-code?view=azure-bot-service-4.0)
+- [Create a bot using Bot Builder SDK for JavaScript - Bot Service | Microsoft Docs](https://docs.microsoft.com/en-us/azure/bot-service/javascript/bot-builder-javascript-quickstart?view=azure-bot-service-4.0)
 - [Set up continuous deployment](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-build-continuous-deployment?view=azure-bot-service-4.0)
+
+
+#### Azure CLI
+
+- [Azure CLI の概要 | Microsoft Docs](https://docs.microsoft.com/ja-jp/cli/azure/?view=azure-cli-latest)
+
+#### Visual Studio Code
+
+- [Visual Studio Code - Code Editing. Redefined](https://code.visualstudio.com/)
