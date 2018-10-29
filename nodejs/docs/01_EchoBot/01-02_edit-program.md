@@ -144,7 +144,7 @@ $BOTSERVICE_NAME
 
 &nbsp;
 
-まず、2018年11月時点、Azure CLI のバージョンが `2.0.49` までの場合は、 `botservice` の拡張機能を追加する必要があります。下記のコマンドを実行してください。
+まず、2018年11月時点、Azure CLI のバージョンが `2.0.49` までの場合は、 `botservice` の拡張機能を追加する必要があります。PowerShell で、下記のコマンドを実行してください。
 
 なお、 `The extension botservice already exists.` と表示される場合はすでに追加済みのため、次に進んで問題ありません。
 
@@ -155,7 +155,7 @@ az extension add --name botservice
 
 &nbsp;
 
-任意のディレクトリを作成し、その中に Bot Service のソースコード一式をダウンロードします。
+つぎに、任意のディレクトリを作成し、その中に Bot Service のソースコード一式をダウンロードします。
 
 ```powershell
 # 任意のディレクトリを作成し、そのディレクトリに移動する
@@ -171,7 +171,7 @@ cd $BOTSERVICE_NAME
 
 ## ソースコードの編集
 
-ソースコード一式のディレクトリを Visual Studio Code で開きます。
+ソースコード一式のディレクトリを Visual Studio Code で開きます。PowerShell から Visual Studio Code を起動するには、下記のコマンドを実行してください。
 
 ```bash
 # カレントディレクトリを、 Visual Studio Code で開く
@@ -188,8 +188,7 @@ code .
 
 &nbsp;
 
-ソースコード一式のディレクトリを開いた Visual Studio Code
- で、 _bot.js_ を開きます。このファイルには `EchoBot` クラスが記述されており、 28行目付近の `onTurn()` でユーザーからの入力に対する処理を記述しています。この部分を変更しましょう。
+ソースコード一式のディレクトリを開いた Visual Studio Code で、 _bot.js_ を開きます。このファイルには `EchoBot` クラスが記述されており、 28行目付近の `onTurn()` でユーザーからの入力に対する処理を記述しています。この部分を変更しましょう。
 
 下記の変更前後のサンプルを参考に、「 `★: ここから ----`」から「`★: ここまで ----`」までを書き換えてください。
 
@@ -260,17 +259,19 @@ code .
 
 ### チャットボットの実行
 
-まず、下記コマンドを実行し、チャットボットを実行します。
+まず、チャットボットを実行します。PowerShell に戻り、下記コマンドを実行してください。
 
 ```powershell
-# パッケージをインストールする（※下記参照）
+# パッケージをインストールする（※1 下記参照）
 npm install
 
-# 実行する
+# 実行する（※2 下記参照）
 npm start
 ```
 
-※ パッケージインストールで、 `node-gyp` のリビルドでエラーが表示される場合がありますが、本ハンズオンには影響しませんので無視してお進みください。
+- ※1 `npm install` を実行すると、 `node-gyp` のリビルドでエラーが表示される場合がありますが、本ハンズオンには影響しませんので無視してお進みください。
+- ※2 `npm start` を実行すると、初回のみ下記の警告が表示されることがあります。「プライベートネットワーク（ホームネットワークや社内ネットワークなど）」（ _Private networks, such as my home or work network_ ）にチェックをし、「アクセスを許可する」（ _Allow access_ ）ボタンをクリックして進めてください。
+  - ![nodejs01-02-22](../../images/nodejs01-02-22.png)
 
 &nbsp;
 
@@ -317,7 +318,7 @@ NODE_ENV=development
 
 ### チャットボットの終了
 
-確認が完了したら、チャットボットを終了しておきましょう。
+確認が完了したら、チャットボットを終了しておきましょう。 PowerShell で下記コマンドを実行してください。
 
 ```powershell
 
@@ -337,11 +338,38 @@ Terminate batch job (Y/N)? Y
 
 &nbsp;
 
-下記コマンドを実行し、
+PowerShell で下記コマンドを実行し、編集したソースコードを Azure 上の Bot Service にデプロイします。
 
 ```powershell
 # カレントディレクトリのコードを Bot Service にデプロイする
 az bot publish --resource-group $RESOURCE_GROUP --name $BOTSERVICE_NAME
+```
+
+しばらく待ち、下記のように表示されたら完了です。
+
+```json
+{
+  "active": true,
+  "author": "N/A",
+  "author_email": "N/A",
+  "complete": true,
+  "deployer": "Push-Deployer",
+  "end_time": "2018-10-29T02:00:34.9846069Z",
+  "id": "<id>",
+  "is_readonly": true,
+  "is_temp": false,
+  "last_success_end_time": "2018-10-29T02:00:34.9846069Z",
+  "log_url": "https://ts2018-echo-bot-nodejs.scm.azurewebsites.net/api/deployments/latest/log",
+  "message": "Created via a push deployment",
+  "progress": "",
+  "provisioningState": null,
+  "received_time": "2018-10-29T02:00:04.2864321Z",
+  "site_name": "ts2018-echo-bot-nodejs",
+  "start_time": "2018-10-29T02:00:04.3957801Z",
+  "status": 4,
+  "status_text": "",
+  "url": "https://ts2018-echo-bot-nodejs.scm.azurewebsites.net/api/deployments/latest"
+}
 ```
 
 &nbsp;
