@@ -12,8 +12,8 @@
 
 - Visual Studio 2017
 - Bot Framework Emulator
-- Microsoft Teams（Google Chrome上で実行）
-- Slack（Google Chrome上で実行）
+- Microsoft Teams
+- Slack
 
 ## ハンズオンマテリアル
 
