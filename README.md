@@ -34,6 +34,4 @@
 
 - **シナリオ**: Azure上に、簡易なエコーを返すチャットボットを作成し、Microsoft Teams や Slack に接続して会話を行います。
   - [C# 版のハンズオンを開始する](./csharp/docs/01_EchoBot/01-01_create-webapp-bot.md)
-  - [Node.js 版のハンズオンを開始する]()
-
-> #　TODO add url link.
+  - [Node.js 版のハンズオンを開始する](./nodejs/docs/01_EchoBot/01-01_create-webapp-bot.md)
